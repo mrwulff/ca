@@ -1,9 +1,13 @@
 sudo apt-get install swig scons build-essential git autoconf automake libtool libdaemon-dev libasound2-dev libpopt-dev libconfig-dev avahi-daemon libavahi-client-dev libssl-dev xbindkeys xbindkeys-config pastebinit
 pip install pygame obd psutil
 
+
+
 git clone https://github.com/jgarff/rpi_ws281x/tree/master/python
 git clone https://github.com/thilaire/rpi-TM1638.git
 
+wget https://raw.githubusercontent.com/mrwulff/car/master/shairport-sync.conf
+sudo mv shairport-sync.conf /etc/shairport-sync.conf
 
 
 
