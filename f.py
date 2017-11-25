@@ -1,4 +1,4 @@
-# -*- coding: cp1252 -*-
+# -*- coding: utf-8 -*-
 #fuck2
 ###page 1=music
 ###page 2=obd
@@ -24,7 +24,18 @@ try:
 except:
     has_udp=False
 
+
+try:
+    os.chdir("/root/car")
+except:
+    print 'cant cd to /root/car'
+
 connection = obd.OBD() # auto-connects to USB or RF port
+
+
+bind=  commands.getoutput("sudo rfcomm bind 0 00:0D:18:00:00:01")
+print bind
+
 
 
 
@@ -61,11 +72,10 @@ selection_t=10
 color=0
 
 
-yellow_a=(250,055,250),(255,0,0),(0,0,250),(250,5,50),(255,255,255),(0,0,0),(125,125,125),(250,220,0),(127,255,0),(205,92,92),	(0,255,255),	(128,0,128)
-yellow=yellow_a[color]
 
 
-color_t=len(yellow_a)-1
+
+
 xpos=50
 ypos=50
 
@@ -78,13 +88,13 @@ font_select=0
 
 font_size=90
 
-sm=0
+
 sm_total=5
 
 speed=0
 
 
-
+sm=0
 
 
 os.chdir("..")
@@ -92,6 +102,19 @@ os.chdir("..")
 
 font_music = pygame.font.Font('fonts/'+fonts[font_select], font_size)
 
+
+
+
+cycle=0
+c=[page,debug,selection,color,font_select,sm,ypos,font_size]
+
+yellow_a=(250,055,250),(255,0,0),(0,0,250),(250,5,50),(255,255,255),(0,0,0),(125,125,125),(250,220,0),(127,255,0),(205,92,92),	(0,255,255),	(128,0,128)
+color_t=len(yellow_a)-1
+yellow=yellow_a[color]
+c[5]=0
+
+print c
+print c
 
 def data(song):
     
@@ -107,7 +130,7 @@ def lab(string,color,x,y,center,i):
     flag2=0
     if page==1:
         while flag==0:
-            font_music = pygame.font.Font('fonts/'+fonts[font_select], font_size)
+            font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size)
 
         
             string_label = font_music.render(string, True, (color))
@@ -115,7 +138,6 @@ def lab(string,color,x,y,center,i):
             aa =string_label.get_rect()
 
             
-            #print '               ',aa[2]
             if aa[2]>600:
                 font_size=font_size-1
             if aa[2]<=600:
@@ -123,7 +145,7 @@ def lab(string,color,x,y,center,i):
 
 
         while flag2==0:
-            font_music = pygame.font.Font('fonts/'+fonts[font_select], font_size)
+            font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size)
 
         
             string_label = font_music.render(string, True, (color))
@@ -131,7 +153,6 @@ def lab(string,color,x,y,center,i):
             aa =string_label.get_rect()
 
             
-            #print '               ',aa[2]
             if aa[2]<600:
                 font_size=font_size+1
             if aa[2]>=600:
@@ -140,7 +161,7 @@ def lab(string,color,x,y,center,i):
                 
     else:
         #font_size=60
-        font_music = pygame.font.Font('fonts/'+fonts[font_select], font_size)
+        font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size)
 
         
         string_label = font_music.render(string, True, (color))
@@ -182,9 +203,9 @@ def rot_center(image, angle):
 
 
 
-def speedmeter(connection):
+def speedmeter(connection,c):
     global speed
-    global sm
+    #global c
     try:
         mph=connection.query(obd.commands.SPEED).value.to("mph")
         mph=mph.magnitude
@@ -199,8 +220,9 @@ def speedmeter(connection):
     except:
         'poop'
 
-    try:    
-        gage = pygame.image.load('image/speed'+str(sm)+'.png')
+    try:
+        print c[5]
+        gage = pygame.image.load('image/speed'+str(c[5])+'.png')
         screen.blit(gage, (00, 0))
     except:
         print 'cant find sm',sm
@@ -217,9 +239,12 @@ def music():
     global album
     global artist
     global ypos
+    global c
     sep=90
     #global color
-    yellow=yellow_a[color]
+    yellow=yellow_a[c[3]]
+    print c[3]
+    print "C{#}"
 
 
     '''
@@ -248,26 +273,25 @@ def music():
         song= 'not connected to music  '
     
 
-    ran=str(random.randint(600,4000))
+    #ran=str(random.randint(600,4000))
 
     try:
-        bg = pygame.image.load('image/dj'+str(selection)+'.png')
+        bg = pygame.image.load('image/dj'+str(c[2])+'.png')
         screen.blit(bg, (00, 0))
     except:
         'poop'
-    
+
 
     
-    space1=lab(song,(yellow),50,ypos,True,1)
+    space1=lab(song,yellow,50,c[7],True,1)
     
-    space2=lab(artist,(yellow),50,ypos+space1,True,2)
-    print '            ',space1,space2
-    lab(album,(yellow),50,ypos+space1+space2,True,3)
+    space2=lab(artist,yellow,50,c[7]+space1,True,2)
+    lab(album,(yellow),50,c[7]+space1+space2,True,3)
     #if debug==True:
         #lab(str(selection)+' '+str(ypos),(yellow),50,330,False)
 
 def obd2(connection,):
-    yellow=yellow_a[color]
+    yellow=yellow_a[c[3]]
     try:
 
         bar=str(connection.query(obd.commands.BAROMETRIC_PRESSURE))
@@ -276,7 +300,7 @@ def obd2(connection,):
         #print temp
         #print type(temp)
         temp=temp.magnitude
-        temp = str(round(temp, 2)+'°F')
+        temp = str(round(temp, 2)+'ï¿½F')
 
         load=str(connection.query(obd.commands.ENGINE_LOAD))
         load,junk=split(load,' ')
@@ -284,7 +308,7 @@ def obd2(connection,):
 
         oiltemp=connection.query(obd.commands.COOLANT_TEMP).value.to("degF")
         oiltemp=oiltemp.magnitude
-        oiltemp = str(round(oiltemp, 2))+'°F'
+        oiltemp = str(round(oiltemp, 2))+'ï¿½F'
 
         mph=connection.query(obd.commands.SPEED).value.to("mph")
         mph=mph.magnitude
@@ -308,9 +332,9 @@ def obd2(connection,):
 
 
         bar='500 kilop'
-        temp='69°F'
+        temp='69ï¿½F'
         load='50.1%'
-        oiltemp='200°F'
+        oiltemp='200ï¿½F'
         mph='99 mph'
         rpm='1233 rpm'
         throt=10.5
@@ -363,7 +387,7 @@ def obd2(connection,):
 
 
 def info():
-    yellow=yellow_a[color]
+    yellow=yellow_a[c[3]]
 
     ip = commands.getoutput("hostname -I")
     
@@ -395,6 +419,8 @@ def info():
 
     
 while not done:
+
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             udp.close()
@@ -411,38 +437,44 @@ while not done:
             poop
 
         #PAGE
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_7:
+            c[0]=c[0]+1
+            
+
+
+
         if event.type == pygame.KEYDOWN and event.key == pygame.K_1:
-            page=page+1
-            if page>pages:
-                page=0
+            cycle=cycle+1
+
+
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_2:
+            c[cycle]=c[cycle]+1
+
+
                 
         #DEBUG
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_2:
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_d:
             if debug==True:
                 debug=False
             else:
                 debug=True
         #BG#
         if event.type == pygame.KEYDOWN and event.key == pygame.K_3:
-            selection=selection+1
-            if selection>selection_t:
-                selection=0
+            c[2]=c[2]+1
+            
         #COLOR        
         if event.type == pygame.KEYDOWN and event.key == pygame.K_4:
-            color=color+1
-            if color>color_t:
-                color=0
+            print c[3]
+            c[3]=c[3]+1
+            
         #FONT#
         if event.type == pygame.KEYDOWN and event.key == pygame.K_5:
-            font_select=font_select+1
-            if font_select>(len(fonts)-1):
-                font_select=0
+            c[4]=c[4]+1
+            
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_6:
-            sm=sm+1
-            if sm>sm_total:
-                sm=0
-
+            c[5]=c[5]+1
+            
 
 
 
@@ -468,39 +500,75 @@ while not done:
             speed=speed-10
 
 
-            
+
+    if c[0]>pages:
+        c[0]=0
+    if c[2]>selection_t:
+        c[2]=0
+    if c[3]>color_t:
+        c[3]=0
+    if c[4]>(len(fonts)-1):
+        c[4]=0
+    if c[5]>sm_total:
+            c[5]=0
+    if cycle>(len(c)-1):
+        cycle=0
+    if c[1]%2==0:
+        debug=True
+    else:
+        debug=False
 
 
-    bg = pygame.image.load('image/bg.png')
+    try:
+        bg = pygame.image.load('image/dj'+str(c[2])+'.png')
+        
+    except:
+        bg = pygame.image.load('image/dj1.png')
+        print 'cant load', c[2]
     screen.blit(bg, (00, 0))
 
-    if page==1:
+
+    print c
+    print c[0]
+    print type(c[0])
+    if c[0]==1:
         music()
-    if page==0:
+    if c[0]==0:
         info()
-    if page==2:
+    if c[0]==2:
         obd2(connection)
-    if page==3:
-        speedmeter(connection)
+    if c[0]==3:
+        speedmeter(connection,c)
 
 
 
 
-      
-       
+
+    #cst=['page','debug','selection','color','font_select','sm','ypos','font_size']
+    #cst=['page','debug','selection','color','font_select','sm','ypos','font_size']
     
     clock2.tick(10)
     if debug==True:
+        font_debug = pygame.font.Font('fonts/'+fonts[37], 30)
+
         #print page,'page'
         #print selection,'selection'
         #print color,'color'
         #print font_size,'font_size'
         #string=str(fonts[font_select])+str(font_select)
-        if page==3:
-            string=str(speed)+' '+str(sm)
+        #if page==3:
+        #    string=str(speed)+' '+str(sm)
+
         #print yellow
-        string_label = font.render(string,True,(yellow))
-        screen.blit(string_label,(5,5))
+        string=str(c[cycle])
+
+        string_label = font_debug.render(string,True,(yellow))
+        screen.blit(string_label,(5,50))
+
+
+        string=cst[cycle]
+        print string
+        string_label = font_debug.render(string,True,(yellow))
+        screen.blit(string_label,(5,25))
 
     pygame.display.flip()
-
