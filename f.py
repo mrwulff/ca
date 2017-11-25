@@ -55,7 +55,7 @@ done = False
 font = pygame.font.SysFont("A", 60)
 #font_music = pygame.font.Font("chiller", 90)
       #pygame.font.Font('redline.ttf', 16)
-print pygame.font.get_fonts()
+#print pygame.font.get_fonts()
 reset=0
 song='All the Small Things'
 album='Godamnit'
@@ -63,7 +63,7 @@ artist='Alkaline Trio'
 debug=True
 
 screen_rect = screen.get_rect()
-page=3
+page=1
 pages=3
 
 selection=1
@@ -83,8 +83,8 @@ fonts=[]
 os.chdir("fonts")
 for file in glob.glob("*.ttf"):
     fonts.append(file)
-print fonts
-font_select=0
+#print fonts
+font_select=27
 
 font_size=90
 
@@ -94,7 +94,7 @@ sm_total=5
 speed=0
 
 
-sm=0
+sm=1
 
 
 os.chdir("..")
@@ -106,15 +106,15 @@ font_music = pygame.font.Font('fonts/'+fonts[font_select], font_size)
 
 
 cycle=0
-c=[page,debug,selection,color,font_select,sm,ypos,font_size]
+c=[page,debug,selection,color,font_select,sm,font_size,font_size,ypos,ypos]
 
 yellow_a=(250,055,250),(255,0,0),(0,0,250),(250,5,50),(255,255,255),(0,0,0),(125,125,125),(250,220,0),(127,255,0),(205,92,92),	(0,255,255),	(128,0,128)
 color_t=len(yellow_a)-1
 yellow=yellow_a[color]
 c[5]=0
 
-print c
-print c
+#print c
+#print c
 
 def data(song):
     
@@ -125,10 +125,11 @@ def data(song):
     return song
 
 def lab(string,color,x,y,center,i):
-    global font_size
+    #global c
+    font_size =c[6]
     flag=0
     flag2=0
-    if page==1:
+    if c[0]==1:
         while flag==0:
             font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size)
 
@@ -159,9 +160,10 @@ def lab(string,color,x,y,center,i):
                 flag2=1
 
                 
-    else:
+    if c[0]!=1:
         #font_size=60
-        font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size)
+        
+        font_music = pygame.font.Font('fonts/'+fonts[c[4]], c[6]/2)
 
         
         string_label = font_music.render(string, True, (color))
@@ -189,7 +191,7 @@ def lab(string,color,x,y,center,i):
     return aa[3]*.7
 
 def rot_center(image, angle):
-    print angle
+    #print angle
     angle=angle*-1.85
     
     """rotate an image while keeping its center and size"""
@@ -221,7 +223,7 @@ def speedmeter(connection,c):
         'poop'
 
     try:
-        print c[5]
+        #print c[5]
         gage = pygame.image.load('image/speed'+str(c[5])+'.png')
         screen.blit(gage, (00, 0))
     except:
@@ -243,8 +245,8 @@ def music():
     sep=90
     #global color
     yellow=yellow_a[c[3]]
-    print c[3]
-    print "C{#}"
+    #print c[3]
+    #print "C{#}"
 
 
     '''
@@ -268,7 +270,7 @@ def music():
         if 'artist=' in info:
             artist=data(info)
     
-        print info
+        #print info
     except:
         song= 'not connected to music  '
     
@@ -283,10 +285,10 @@ def music():
 
 
     
-    space1=lab(song,yellow,50,c[7],True,1)
+    space1=lab(song,yellow,50,c[8],True,1)
     
-    space2=lab(artist,yellow,50,c[7]+space1,True,2)
-    lab(album,(yellow),50,c[7]+space1+space2,True,3)
+    space2=lab(artist,yellow,50,c[8]+space1,True,2)
+    lab(album,(yellow),50,c[8]+space1+space2,True,3)
     #if debug==True:
         #lab(str(selection)+' '+str(ypos),(yellow),50,330,False)
 
@@ -328,6 +330,7 @@ def obd2(connection,):
         gas=connection.query(obd.commands.FUEL_LEVEL)
         gas=gas.value
         gas=round(gas,1)
+        gas=str(gas)+'%'
     except:        
 
 
@@ -337,12 +340,21 @@ def obd2(connection,):
         oiltemp='200�F'
         mph='99 mph'
         rpm='1233 rpm'
-        throt=10.5
+        throt='10.5'
         runtime='4444 seconds'
         gas=12.4
 
     i=0
-
+    c[8]
+    gap=50
+    st=10
+    ooo=[bar,temp,load,oiltemp,mph,rpm,throt,runtime,gas]
+    for z in range(len(ooo)-1):
+        print ooo[z]
+        print type(ooo[z])
+        lab(str(ooo[z]),(yellow),50,st+(gap*z),False,i)
+    '''
+        
     lab(bar,(yellow),50,10,False,i)
 
         
@@ -355,18 +367,19 @@ def obd2(connection,):
     lab(oiltemp,(yellow),50,160,False,i)
 
 
-    lab(str(mph),(yellow),50,210,False,i)
+    lab((mph),(yellow),50,210,False,i)
 
     
     lab(rpm,(yellow),50,260,False,i)
 
-    lab(str(throt),(yellow),50,310,False,i)
+    lab((throt),(yellow),50,310,False,i)
 
                 
     lab(runtime,(yellow),50,360,False,i)
 
     
-    lab(str(gas)+'%',(yellow),50,410,False,i)
+    lab(gas,(yellow),50,410,False,i)
+    '''
 
 
     #lab(str(connection.query(obd.commands.DISTANCE_SINCE_DTC_CLEAR).value.to("mile")),(yellow),350,60,False)
@@ -438,6 +451,7 @@ while not done:
 
         #PAGE
         if event.type == pygame.KEYDOWN and event.key == pygame.K_7:
+            
             c[0]=c[0]+1
             
 
@@ -449,6 +463,8 @@ while not done:
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_2:
             c[cycle]=c[cycle]+1
+
+
 
 
                 
@@ -464,7 +480,7 @@ while not done:
             
         #COLOR        
         if event.type == pygame.KEYDOWN and event.key == pygame.K_4:
-            print c[3]
+            #print c[3]
             c[3]=c[3]+1
             
         #FONT#
@@ -481,17 +497,19 @@ while not done:
 
 
                 
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
-            ypos=ypos-5
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_2 and cycle==8:
+            #ypos=ypos-5
+            c[8]=c[8]-5
+            
 
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
-            ypos=ypos+4
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_2 and cycle==9:
+            c[8]=c[8]+5
 
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
-            font_size=font_size+3
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_2 and cycle==6:
+            c[6]=c[6]+3
 
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_z:
-            font_size=font_size-2
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_2 and cycle==7:
+            c[6]=c[6]-2
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
             speed=speed+10
@@ -513,7 +531,7 @@ while not done:
             c[5]=0
     if cycle>(len(c)-1):
         cycle=0
-    if c[1]%2==0:
+    if c[1]%2==1:
         debug=True
     else:
         debug=False
@@ -528,12 +546,13 @@ while not done:
     screen.blit(bg, (00, 0))
 
 
-    print c
-    print c[0]
-    print type(c[0])
+    #print c
+    #print c[0]
+    #print type(c[0])
     if c[0]==1:
         music()
     if c[0]==0:
+        
         info()
     if c[0]==2:
         obd2(connection)
@@ -545,10 +564,12 @@ while not done:
 
 
     #cst=['page','debug','selection','color','font_select','sm','ypos','font_size']
-    #cst=['page','debug','selection','color','font_select','sm','ypos','font_size']
+    cst=['page','debug','bg','color','font_select','sm','font up','font down','y pos+','ypos --']
     
     clock2.tick(10)
     if debug==True:
+        c[7]=c[6]
+        c[9]=c[8]
         font_debug = pygame.font.Font('fonts/'+fonts[37], 30)
 
         #print page,'page'
@@ -567,7 +588,7 @@ while not done:
 
 
         string=cst[cycle]
-        print string
+        #22print string
         string_label = font_debug.render(string,True,(yellow))
         screen.blit(string_label,(5,25))
 
