@@ -28,3 +28,8 @@ getent passwd shairport-sync &> /dev/null || sudo useradd -r -M -g shairport-syn
 
 sudo make install  
 sudo systemctl enable shairport-sync 
+
+sudo bash -c 'printf "dtoverlay=sdhost,overclock_50=100\n" >> /boot/config.txt'
+
+
+
