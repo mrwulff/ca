@@ -2,6 +2,11 @@ sudo apt-get install swig scons build-essential git autoconf automake libtool li
 pip install pygame obd psutil
 
 
+sudo raspi-config nonint do_serial 0
+sudo raspi-config nonint do_ssh 0
+
+sudo raspi-config nonint do_vnc 0
+
 
 git clone https://github.com/jgarff/rpi_ws281x/tree/master/python
 git clone https://github.com/thilaire/rpi-TM1638.git
