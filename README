@@ -1,5 +1,5 @@
-sudo apt-get install swig scons build-essential git autoconf automake libtool libdaemon-dev libasound2-dev libpopt-dev libconfig-dev avahi-daemon libavahi-client-dev libssl-dev xbindkeys xbindkeys-config pastebinit
-pip install pygame obd psutil
+sudo apt-get install swig scons python-pygame build-essential git autoconf automake libtool libdaemon-dev libasound2-dev libpopt-dev libconfig-dev avahi-daemon libavahi-client-dev libssl-dev xbindkeys xbindkeys-config pastebinit
+sudo pip install  obd psutil
 
 
 sudo raspi-config nonint do_serial 0
