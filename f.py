@@ -6,6 +6,7 @@
 
 
 
+import serial
 
 
 import pygame
@@ -19,6 +20,7 @@ import obd
 import commands
 import os,glob
 import psutil
+import s
 try:
     import udp
 except:
@@ -29,6 +31,16 @@ try:
     os.chdir("/root/car")
 except:
     print 'cant cd to /root/car'
+
+    
+try:
+    arduino = serial.Serial('COM5', 2000000, timeout=0)
+except:
+    try:
+        arduino = serial.Serial('/dev/ttyUSB0',timeout)
+    except:
+        
+        'print arduino failed'
 
 connection = obd.OBD() # auto-connects to USB or RF port
 
@@ -293,6 +305,7 @@ def music():
         #lab(str(selection)+' '+str(ypos),(yellow),50,330,False)
 
 def obd2(connection,):
+    global arduino
     yellow=yellow_a[c[3]]
     try:
 
@@ -343,6 +356,8 @@ def obd2(connection,):
         throt='10.5'
         runtime='4444 seconds'
         gas=12.4
+    
+    
 
     i=0
     c[8]
@@ -568,6 +583,7 @@ while not done:
     
     clock2.tick(10)
     if debug==True:
+        s.send(c[0],False,arduino)
         c[7]=c[6]
         c[9]=c[8]
         font_debug = pygame.font.Font('fonts/'+fonts[37], 30)
