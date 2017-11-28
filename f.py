@@ -20,7 +20,7 @@ import obd
 import commands
 import os,glob
 import psutil
-import s
+#import s
 try:
     import udp
 except:
@@ -32,7 +32,7 @@ try:
 except:
     print 'cant cd to /root/car'
 
-    
+    '''
 try:
     arduino = serial.Serial('COM5', 2000000, timeout=0)
 except:
@@ -41,6 +41,7 @@ except:
     except:
         
         'print arduino failed'
+        '''
 
 connection = obd.OBD() # auto-connects to USB or RF port
 
@@ -89,12 +90,22 @@ color=0
 
 
 xpos=50
-ypos=50
+ypos=25
 
 fonts=[]
 os.chdir("fonts")
 for file in glob.glob("*.ttf"):
     fonts.append(file)
+os.chdir("..")
+os.chdir("image/bg/")
+bgs=[]
+for file in glob.glob("*.*"):
+    bgs.append(file)
+os.chdir("..")
+os.chdir("..")
+
+
+    
 #print fonts
 font_select=27
 
@@ -109,7 +120,7 @@ speed=0
 sm=1
 
 
-os.chdir("..")
+
 
 
 font_music = pygame.font.Font('fonts/'+fonts[font_select], font_size)
@@ -143,10 +154,12 @@ def lab(string,color,x,y,center,i):
     flag2=0
     if c[0]==1:
         while flag==0:
-            font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size)
+            font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size,background=(0,255,0))
 
         
-            string_label = font_music.render(string, True, (color))
+            string_label = font_music.render(string, True, (color),(0,0,0,250))
+            string_label2 = font_music.render(string, True, (color))
+
 
             aa =string_label.get_rect()
 
@@ -158,10 +171,12 @@ def lab(string,color,x,y,center,i):
 
 
         while flag2==0:
-            font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size)
+            font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size,background=(0,255,0))
 
         
-            string_label = font_music.render(string, True, (color))
+            string_label = font_music.render(string, True, (color),(0,0,0,250))
+            string_label2 = font_music.render(string, True, (color))
+
 
             aa =string_label.get_rect()
 
@@ -178,7 +193,9 @@ def lab(string,color,x,y,center,i):
         font_music = pygame.font.Font('fonts/'+fonts[c[4]], c[6]/2)
 
         
-        string_label = font_music.render(string, True, (color))
+        string_label = font_music.render(string, True, (color),(0,0,0,255))
+        string_label2 = font_music.render(string, True, (color),(0,0,0,255))
+
 
         aa =string_label.get_rect()
         
@@ -193,14 +210,20 @@ def lab(string,color,x,y,center,i):
     mid2=mid
     real=720-mid2
     real=real/2
+    
 
     if center==True:    
         screen.blit(string_label,(real,y))
     if center==False:
         screen.blit(string_label,(x,y))
     #screen.blit(*text_objects(font, message, color, screen_rect.center))
+    screen.blit(bgc,(0,0))
+    if center==True:    
+        screen.blit(string_label2,(real,y))
+    if center==False:
+        screen.blit(string_label2,(x,y))
 
-    return aa[3]*.7
+    return aa[3]
 
 def rot_center(image, angle):
     #print angle
@@ -259,6 +282,7 @@ def music():
     yellow=yellow_a[c[3]]
     #print c[3]
     #print "C{#}"
+    global bgc
 
 
     '''
@@ -536,7 +560,7 @@ while not done:
 
     if c[0]>pages:
         c[0]=0
-    if c[2]>selection_t:
+    if c[2]>(len(bgs)-1):
         c[2]=0
     if c[3]>color_t:
         c[3]=0
@@ -556,8 +580,18 @@ while not done:
         bg = pygame.image.load('image/dj'+str(c[2])+'.png')
         
     except:
-        bg = pygame.image.load('image/dj1.png')
+        #print bgs
+        #print selection
+        #print c[2]
+        bg = pygame.image.load('image/bg/'+bgs[c[2]]).convert_alpha()
+        bg= pygame.transform.scale(bg, (720,480))
+        bgc=bg.copy()
+        bgc.fill((255, 255, 255, 50), None, pygame.BLEND_RGBA_MULT)
+
+        
         print 'cant load', c[2]
+    #screen.blit(bg, (00, 0))
+    
     screen.blit(bg, (00, 0))
 
 
@@ -583,7 +617,7 @@ while not done:
     
     clock2.tick(10)
     if debug==True:
-        s.send(c[0],False,arduino)
+        #s.send(c[0],False,arduino)
         c[7]=c[6]
         c[9]=c[8]
         font_debug = pygame.font.Font('fonts/'+fonts[37], 30)
@@ -606,6 +640,6 @@ while not done:
         string=cst[cycle]
         #22print string
         string_label = font_debug.render(string,True,(yellow))
-        screen.blit(string_label,(5,25))
+        screen.blit(string_label,(5,400))
 
     pygame.display.flip()
