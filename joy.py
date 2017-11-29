@@ -31,7 +31,7 @@ except:
 
 
 try:
-    os.chdir("/root/car")
+    os.chdir("/home/pi/car")
 except:
     print 'cant cd to /root/car'
 
@@ -120,10 +120,10 @@ c[5]=0
 
 
     
-def main(my_joystick):
+def main():
     flagquit=0
     global done
-    screen = pygame.display.set_mode((720,480))
+    screen = pygame.display.set_mode((720,480),pygame.NOFRAME)
 
 
     
@@ -200,7 +200,7 @@ def main(my_joystick):
         #cst=['page','debug','selection','color','font_select','sm','ypos','font_size']
         cst=['page','debug','bg','color','font_select','sm','font up','font down','y pos+','ypos --']
         
-        clock2.tick(10)
+        
         if debug==True:
             #s.send(c[0],False,arduino)
             c[7]=c[6]
@@ -228,16 +228,9 @@ def main(my_joystick):
             screen.blit(string_label,(5,400))
 
         pygame.display.flip()
-        if flagquit==5:
-            pygame.display.quit()
-            realmain()
 
-        state=[]
-        #print (h_axis_pos, v_axis_pos)
-        for a in range(5):
-            b=my_joystick.get_button(a)
-            state.append(b)
-        print state
+
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -266,11 +259,11 @@ def main(my_joystick):
 
 
 
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_3 or state[4]==1:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_3: 
                 cycle=cycle+1
 
 
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_2 or state[3]==1:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_2 :
                 c[cycle]=c[cycle]+1
 
 
@@ -338,10 +331,7 @@ def main(my_joystick):
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_x:
                 speed=speed-10
-            state0=my_joystick.get_button(0)
-            if state0==1:
-                print state0
-                run_quit(screen,bg)
+    clock2.tick(60)
 
 
 def data(song):
@@ -680,33 +670,8 @@ def info(screen,bg,bgc):
     
 
 
-#main()
-def realmain():
-    pygame.init()
-    joystick_count = pygame.joystick.get_count()
-    print ("There is ", joystick_count, "joystick/s")
-    if joystick_count == 0:
-        print ("Error, I did not find any joysticks")
-    else:
-        my_joystick = pygame.joystick.Joystick(0)
-        my_joystick.init()
-    while True:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
+main()
 
-        state=[]
-        #print (h_axis_pos, v_axis_pos)
-        for a in range(5):
-            b=my_joystick.get_button(a)
-            state.append(b)
-            
-        print state
-        if state[0]==1:
-            main(my_joystick)
-            
-        print 
 
-realmain()
+
 
