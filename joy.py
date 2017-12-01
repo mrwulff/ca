@@ -37,9 +37,14 @@ except:
 
 pygame.init()
 
+bind=  commands.getoutput("sudo rfcomm bind 0 00:0D:18:00:00:01")
+print bind
    
 
 connection = obd.OBD() # auto-connects to USB or RF port
+temp=(connection.query(obd.commands.AMBIANT_AIR_TEMP).value.to("degF"))
+print temp
+
 '''
 
 bind=  commands.getoutput("sudo rfcomm bind 0 00:0D:18:00:00:01")
@@ -114,7 +119,7 @@ yellow_a=(250,055,250),(255,0,0),(0,0,250),(250,5,50),(255,255,255),(0,0,0),(125
 color_t=len(yellow_a)-1
 yellow=yellow_a[color]
 c=[page,debug,selection,color,font_select,sm,font_size,font_size,ypos,ypos]
-c[5]=0
+c[5]=2
 
 
 
@@ -297,7 +302,9 @@ def main():
                 fr=random.randint(0,len(fonts))
                 c[4]=fr
             '''
-            '''    
+
+woop
+            '''
             #FONT#
             if event.type == pygame.KEYDOWN and event.key == pygame.K_5:
                 c[4]=c[4]+1
@@ -447,9 +454,10 @@ def speedmeter(screen,bg,bgc,connection,c):
     try:
         mph=connection.query(obd.commands.SPEED).value.to("mph")
         mph=mph.magnitude
-        mph=str(rouund(mph,2))+' mph'
+        mph=(rouund(mph,2))
+	print mph
     except:
-        'poop'
+        print mph,'no good'
 
 
     try:
@@ -467,7 +475,7 @@ def speedmeter(screen,bg,bgc,connection,c):
 
 
     needle = pygame.image.load('image/sneedle1.png')
-    needle_rot=rot_center(needle,(speed+265))
+    needle_rot=rot_center(needle,(mph+265))
     screen.blit(needle_rot, (120, 0))
 
       
@@ -530,9 +538,10 @@ def music(screen,bg,bgc):
         #lab(str(selection)+' '+str(ypos),(yellow),50,330,False)
 
 def obd2(screen,bg,bgc,connection,):
+    yellow=yellow_a[c[3]]
     global arduino
     yellow=yellow_a[c[3]]
-    try:
+    if 1==1:
 
         bar=str(connection.query(obd.commands.BAROMETRIC_PRESSURE))
 
@@ -540,7 +549,7 @@ def obd2(screen,bg,bgc,connection,):
         #print temp
         #print type(temp)
         temp=temp.magnitude
-        temp = str(round(temp, 2)+'�F')
+        temp = str(round(temp, 2))+('*F')
 
         load=str(connection.query(obd.commands.ENGINE_LOAD))
         load,junk=split(load,' ')
@@ -548,11 +557,11 @@ def obd2(screen,bg,bgc,connection,):
 
         oiltemp=connection.query(obd.commands.COOLANT_TEMP).value.to("degF")
         oiltemp=oiltemp.magnitude
-        oiltemp = str(round(oiltemp, 2))+'�F'
+        oiltemp = str(round(oiltemp, 2))+('*F')
 
         mph=connection.query(obd.commands.SPEED).value.to("mph")
         mph=mph.magnitude
-        mph=str(rouund(mph,2))+' mph'
+        mph=str(round(mph,2))+' mph'
 
         rpm=str(connection.query(obd.commands.RPM))
         rpm=split(rpm,' ')
@@ -561,15 +570,15 @@ def obd2(screen,bg,bgc,connection,):
         throt=connection.query(obd.commands.THROTTLE_POS)
         throt=throt.value
         throt=round(throt,1)
-        throt=str(throt)+'%'
+        throt=str(throt)+'%Throttle'
 
         runtime=str(connection.query(obd.commands.RUN_TIME))
 
         gas=connection.query(obd.commands.FUEL_LEVEL)
         gas=gas.value
         gas=round(gas,1)
-        gas=str(gas)+'%'
-    except:        
+        gas=str(gas)+'% Gas'
+    if 1==2:        
 
 
         bar='500 kilop'
@@ -589,10 +598,10 @@ def obd2(screen,bg,bgc,connection,):
     gap=50
     st=10
     ooo=[bar,temp,load,oiltemp,mph,rpm,throt,runtime,gas]
-    for z in range(len(ooo)-1):
+    for z in range(len(ooo)):
         print ooo[z]
         print type(ooo[z])
-        #lab(screen,bg,bgc,str(ooo[z]),(yellow),50,st+(gap*z),False,i)
+        lab(screen,bg,bgc,str(ooo[z]),(yellow),50,st+(gap*z),False,i)
     '''
         
     lab(bar,(yellow),50,10,False,i)
@@ -671,7 +680,3 @@ def info(screen,bg,bgc):
 
 
 main()
-
-
-
-
