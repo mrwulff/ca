@@ -32,19 +32,25 @@ except:
 
 try:
     os.chdir("/home/pi/car")
+    has_linux=1
 except:
     print 'cant cd to /root/car'
+    has_linux=0
 
 pygame.init()
 
 bind=  commands.getoutput("sudo rfcomm bind 0 00:0D:18:00:00:01")
 print bind
    
-
-connection = obd.OBD() # auto-connects to USB or RF port
-temp=(connection.query(obd.commands.AMBIANT_AIR_TEMP).value.to("degF"))
-print temp
-
+try:
+    connection = obd.OBD() # auto-connects to USB or RF port
+    temp55=(connection.query(obd.commands.AMBIANT_AIR_TEMP).value.to("degF"))
+    temp55=str(temp55)
+    print temp55
+except:
+    has_linux=0
+    temp55=''
+    
 '''
 
 bind=  commands.getoutput("sudo rfcomm bind 0 00:0D:18:00:00:01")
@@ -68,25 +74,25 @@ done = False
 font = pygame.font.SysFont("A", 60)
 
 reset=0
-song='All the Small Things'
-album='Godamnit'
+song='A Things'
+album='100'
 artist='Alkaline Trio'
 debug=True
-page=1
 pages=3
 
-selection=1
 selection_t=10
 
-color=0
+pygame.mouse.set_visible(0)
 
 
-
+######446=BOTTOM OF SCREEEN##########
+######691=RIGHT OF SCREEN
+BOTTOM=446
+RIGHT=691
 
 
 
 xpos=50
-ypos=25
 
 fonts=[]
 os.chdir("fonts")
@@ -103,9 +109,9 @@ os.chdir("..")
 
     
 #print fonts
-font_select=27
 
-font_size=90
+
+
 
 
 sm_total=5
@@ -113,10 +119,29 @@ sm_total=5
 speed=0
 
 
-sm=1
+
 
 yellow_a=(250,055,250),(255,0,0),(0,0,250),(250,5,50),(255,255,255),(0,0,0),(125,125,125),(250,220,0),(127,255,0),(205,92,92),	(0,255,255),	(128,0,128)
 color_t=len(yellow_a)-1
+
+
+sm=1
+font_size=90
+font_select=27
+selection=1
+color=0
+page=1
+ypos=5
+debug=True
+
+
+
+largestx=0
+spacex1=0
+spacex2=0
+spacex3=0
+tot_space=0
+
 yellow=yellow_a[color]
 c=[page,debug,selection,color,font_select,sm,font_size,font_size,ypos,ypos]
 c[5]=2
@@ -124,11 +149,21 @@ c[5]=2
 
 
 
+cr=random.randint(0,(color_t))
+c[3]=cr
+
+br=random.randint(0,len(bgs))
+c[2]=br
+#print len(c[3])
+fr=random.randint(0,len(fonts))
+c[4]=fr
+
+
     
 def main():
     flagquit=0
     global done
-    screen = pygame.display.set_mode((720,480),pygame.NOFRAME)
+    screen = pygame.display.set_mode((RIGHT,BOTTOM),pygame.NOFRAME)
 
 
     
@@ -179,7 +214,7 @@ def main():
         bgc.fill((255, 255, 255, 50), None, pygame.BLEND_RGBA_MULT)
 
         
-        print 'cant load', c[2]
+        #print 'cant load', c[2]
         #screen.blit(bg, (00, 0))
         
         screen.blit(bg, (00, 0))
@@ -204,8 +239,32 @@ def main():
 
         #cst=['page','debug','selection','color','font_select','sm','ypos','font_size']
         cst=['page','debug','bg','color','font_select','sm','font up','font down','y pos+','ypos --']
-        
-        
+        clock=True
+        if clock==True:
+            font_clock = pygame.font.Font('fonts/'+fonts[c[4]], 50)
+            #clockd=time.strftime("%I:%M %p")
+            clockd=time.strftime("%I:%M")
+            if clockd[0]=='0':
+                clockd=clockd[1:]
+            clock
+
+
+
+            #string_label = font_clock.render(clockd+temp55,True,(yellow),(0,0,0))
+            string_label = font_clock.render(clockd+temp55,True,(0,0,0))
+            aa =string_label.get_rect()
+            mid= aa[2]
+            mid2=mid
+            real=RIGHT-mid2
+            real=real/2
+
+            
+            button = pygame.image.load('image/button2.png')
+            button= pygame.transform.scale(button, (mid+60,100))
+            screen.blit(button,(real-30,BOTTOM-50))
+            screen.blit(string_label,(real,BOTTOM-50))
+
+            
         if debug==True:
             #s.send(c[0],False,arduino)
             c[7]=c[6]
@@ -290,7 +349,7 @@ def main():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_1:
                 #print c[3]
                 subprocess.call("shutdown -h now", shell=True,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            
+            #RANDOM!!!     
             if event.type == pygame.KEYDOWN and event.key == pygame.K_0:
                 #print c[3]
                 cr=random.randint(0,(color_t))
@@ -301,10 +360,7 @@ def main():
                 #print len(c[3])
                 fr=random.randint(0,len(fonts))
                 c[4]=fr
-            '''
 
-woop
-            '''
             #FONT#
             if event.type == pygame.KEYDOWN and event.key == pygame.K_5:
                 c[4]=c[4]+1
@@ -321,11 +377,11 @@ woop
                     
             if event.type == pygame.KEYDOWN and event.key == pygame.K_2 and cycle==8:
                 #ypos=ypos-5
-                c[8]=c[8]-5
+                c[8]=c[8]-1
                 
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_2 and cycle==9:
-                c[8]=c[8]+5
+                c[8]=c[8]+1
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_2 and cycle==6:
                 c[6]=c[6]+3
@@ -350,44 +406,70 @@ def data(song):
     return song
 
 def lab(screen,bg,bgc,string,color,x,y,center,i):
+    max_size=550
     #print 'omg'
     #global c
+    
     font_size =c[6]
+    #print font_size,' FONT'
     flag=0
     flag2=0
+    flag3=1
     if c[0]==1:
+        while len(string)<13:
+            string=' '+string+' '
+            #print string
         while flag==0:
-            font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size,background=(0,255,0))
+            #font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size,background=(0,255,0))
+            font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size)
 
         
-            string_label = font_music.render(string, True, (color),(0,0,0,250))
-            string_label2 = font_music.render(string, True, (color))
+            #string_label2 = font_music.render(string, True, (color),(0,0,0,250))
+            string_label = font_music.render(string, True, (color))
+            
 
 
             aa =string_label.get_rect()
 
             
-            if aa[2]>600:
-                font_size=font_size-1
-            if aa[2]<=600:
+            if aa[2]>max_size:
+                font_size=font_size-5
+            if aa[2]<=max_size:
                 flag=1
 
 
         while flag2==0:
-            font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size,background=(0,255,0))
+            #font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size,background=(0,255,0))
+            font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size)
 
         
-            string_label = font_music.render(string, True, (color),(0,0,0,250))
-            string_label2 = font_music.render(string, True, (color))
+            #string_label2 = font_music.render(string, True, (color),(0,0,0,250))
+            string_label = font_music.render(string, True, (color))
 
 
             aa =string_label.get_rect()
 
             
-            if aa[2]<600:
-                font_size=font_size+1
-            if aa[2]>=600:
+            if aa[2]<max_size:
+                font_size=font_size+5
+            if aa[2]>=max_size:
                 flag2=1
+        string_label=textOutline(font_music,string,(color),(125,125,125))
+        
+        '''
+        while flag3==0:
+            font_music = pygame.font.Font('fonts/'+fonts[c[4]], font_size,background=(0,255,0))
+            string_label = font_music.render(string, True, (color),(0,0,0,250))
+            string_label2 = font_music.render(string, True, (color))
+            print aa[3]
+            aa =string_label.get_rect()
+            if aa[3]>200:
+                font_size=font_size-10
+                
+            if aa[3]<=200:
+                flag3=1'''
+            
+            
 
                 
     if c[0]!=1:
@@ -397,7 +479,9 @@ def lab(screen,bg,bgc,string,color,x,y,center,i):
 
         
         string_label = font_music.render(string, True, (color),(0,0,0,255))
+        string_label=textOutline(font_music,string,(0,255,255),color)
         string_label2 = font_music.render(string, True, (color),(0,0,0,255))
+        string_label2=textOutline(font_music,string,(0,255,0),(255,0,0))
 
 
         aa =string_label.get_rect()
@@ -411,24 +495,59 @@ def lab(screen,bg,bgc,string,color,x,y,center,i):
     #print aa
     mid= aa[2]
     mid2=mid
-    real=720-mid2
+    real=RIGHT-mid2
     real=real/2
     
 
     if center==True:    
         screen.blit(string_label,(real,y))
+        
     if center==False:
         screen.blit(string_label,(x,y))
     #screen.blit(*text_objects(font, message, color, screen_rect.center))
+        '''
     if c[1]%2==1:
         screen.blit(bgc,(0,0))
         if center==True:    
             screen.blit(string_label2,(real,y))
         if center==False:
             screen.blit(string_label2,(x,y))
+            '''
 
 
-    return aa[3]
+    return aa[3],aa[2]
+
+
+def textHollow(font, message, fontcolor):
+    notcolor = [c^0xFF for c in fontcolor]
+    base = font.render(message, 0, fontcolor, notcolor)
+    size = base.get_width() + 18, base.get_height() + 18
+    img = pygame.Surface(size, 50)
+    img.fill(notcolor)
+    base.set_colorkey(0)
+    img.blit(base, (0, 0))
+    img.blit(base, (2, 0))
+    img.blit(base, (0, 2))
+    img.blit(base, (2, 2))
+    base.set_colorkey(0)
+    base.set_palette_at(1, notcolor)
+    img.blit(base, (1, 1))
+    img.set_colorkey(notcolor)
+    return img
+
+
+
+
+def textOutline(font, message, fontcolor, outlinecolor):
+    base = font.render(message, 0, fontcolor)
+    outline = textHollow(font, message, outlinecolor)
+    img = pygame.Surface(outline.get_size(), 16)
+    img.blit(base, (1, 1))
+    img.blit(outline, (0, 0))
+    img.set_colorkey(0)
+    return img
+
+
 def run_quit(screen,bg):
     screen.blit(bg, (00, 0))
     bind=  commands.getoutput("sudo rfcomm bind 0 00:0D:18:00:00:01")
@@ -455,16 +574,20 @@ def speedmeter(screen,bg,bgc,connection,c):
         mph=connection.query(obd.commands.SPEED).value.to("mph")
         mph=mph.magnitude
         mph=(rouund(mph,2))
-	print mph
+        print mph
     except:
+        mph=speed
         print mph,'no good'
+
+        
 
 
     try:
         bg = pygame.image.load('image/dj'+str(selection)+'.png')
-        screen.blit(bg, (00, 0))
+        #screen.blit(bg, (00, 0))
     except:
         'poop'
+
 
     try:
         #print c[5]
@@ -476,22 +599,31 @@ def speedmeter(screen,bg,bgc,connection,c):
 
     needle = pygame.image.load('image/sneedle1.png')
     needle_rot=rot_center(needle,(mph+265))
+    lab(screen,bg,bgc,str(mph),yellow,50,400,True,3)
+
     screen.blit(needle_rot, (120, 0))
 
       
     
 def music(screen,bg,bgc):
     global song
+    #global HEIGHT
     global album
     global artist
     global ypos
     global c
     sep=90
+    global font_size
     #global color
     yellow=yellow_a[c[3]]
     #print c[3]
     #print "C{#}"
     #global bgc
+
+    global spacex1
+    global spacex2
+    global spacex3
+    global tot_space
 
 
     '''
@@ -509,9 +641,15 @@ def music(screen,bg,bgc):
         info=udp.get()
         if "song=" in info:
             song=data(info)
+        #while len(song)<5:
+          #  song=' '+song+' '
+            
 
         if "album=" in info:
+            
             album=data(info)
+            #while len(album)<5:
+               # album=' '+album+' '
         if 'artist=' in info:
             artist=data(info)
     
@@ -529,19 +667,43 @@ def music(screen,bg,bgc):
         'poop'
 
 
+
+
+    largestx=spacex1
+    if spacex2>largestx:
+        spacex2=largestx
+    if spacex3>largestx:
+        spacex3=largestx
+    left=(RIGHT-largestx)/2
+    trans=125
+    #screen.fill((trans, trans, trans), (left,c[8],largestx,tot_space), pygame.BLEND_RGBA_MULT)
     
-    space1=lab(screen,bg,bgc,song,yellow,50,c[8],True,1)
+
+
+
+
+
     
-    space2=lab(screen,bg,bgc,artist,yellow,50,c[8]+space1,True,2)
-    lab(screen,bg,bgc,album,yellow,50,c[8]+space1+space2,True,3)
-    #if debug==True:
-        #lab(str(selection)+' '+str(ypos),(yellow),50,330,False)
+    space1,spacex1=lab(screen,bg,bgc,song,yellow,50,c[8],True,1)
+    
+    space2,spacex2=lab(screen,bg,bgc,artist,yellow,50,c[8]+space1,True,2)
+    space3,spacex3=lab(screen,bg,bgc,album,yellow,50,c[8]+space1+space2,True,3)
+    tot_space= space1+space2+space3
+    tot_x_space=spacex1+spacex2+spacex3
+    #print tot_space,'tot_space'
+    c[8]=(BOTTOM-tot_space)/2
+
+
+
+
+
+    
 
 def obd2(screen,bg,bgc,connection,):
     yellow=yellow_a[c[3]]
     global arduino
     yellow=yellow_a[c[3]]
-    if 1==1:
+    if has_linux==1:
 
         bar=str(connection.query(obd.commands.BAROMETRIC_PRESSURE))
 
@@ -578,7 +740,7 @@ def obd2(screen,bg,bgc,connection,):
         gas=gas.value
         gas=round(gas,1)
         gas=str(gas)+'% Gas'
-    if 1==2:        
+    if has_linux==0:        
 
 
         bar='500 kilop'
