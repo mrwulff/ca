@@ -7,9 +7,7 @@
 // @license      ISC; http://opensource.org/licenses/ISC
 // @grant        none
 // @run-at       document-start
-// @include      https://www.diamondhunt.co
-// @match		https://www.diamondhunt.co
-// @match		https://*.diamondhunt.co
+// @match      https://www.diamondhunt.co/
 // ==/UserScript==
 
 /**
@@ -4643,14 +4641,10 @@ var itemBoxes;
 			init = false;
 		}
 		var isInTransit = getGameValue(timerKey) > 0;
-		
-		
 		var otherInTransit = boatTimerKeys.some(function (k)
 		{
-			return k != timerKey && getGameValue(k) > 0 && !boundBoatingDock;
+			return k != timerKey && getGameValue(k) > 0;
 		});
-		
-		
 		span.textContent = isInTransit ? 'In transit' : 'Ready';
 		span.style.visibility = otherInTransit ? 'hidden' : '';
 		var parent = span.parentElement;
@@ -6955,6 +6949,9 @@ var timer;
 		addStyle("\n/* hide built in timer elements */\n" + cssRulePrefix + " > *:not(img):not(.info)\n{\n\tdisplay: none;\n}\n" + cssRulePrefix + " > div.info\n{\n\tcolor: " + textColor + ";\n\tmargin-top: 5px;\n\tpointer-events: none;\n\ttext-align: center;\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n}\n" + cssRulePrefix + " > div.info > div.name\n{\n\tfont-size: 1.2rem;\n}\n" + cssRulePrefix + " > div.info > div.timer\n{\n\tcolor: " + timerColor + ";\n}\n\t\t");
 		let iteration = cssRulePrefix == '.woodcutting-tree' ? 6 : 7;
         for (var i = 0; i < iteration; i++)
+			
+		
+		
 		{
 			var num = i + 1;
 			var infoId = infoIdPrefx + num;
@@ -7027,6 +7024,7 @@ var timer;
 		if (stage == 0)
 		{
 			var isLocked = (patchId == 5 || patchId == 6) && win.donorFarmingPatch < win.currentTimeMillis;
+
 			nameEl.textContent = isLocked ? 'Locked' : 'Click to grow';
 			timerEl.textContent = '';
 		}
@@ -7082,8 +7080,16 @@ var timer;
 			|| win.farmingPatchStage2 == 0 || win.farmingPatchStage2 == 4
 			|| win.farmingPatchStage3 == 0 || win.farmingPatchStage3 == 4
 			|| win.farmingPatchStage4 == 0 || win.farmingPatchStage4 == 4
+			
+			
 			|| win.farmingPatchStage7 == 0 || win.farmingPatchStage7 == 4
 			|| win.donorFarmingPatch > win.currentTimeMillis && (win.farmingPatchStage5 == 0 || win.farmingPatchStage5 == 4
+				
+				
+				
+				
+				
+				
 				|| win.farmingPatchStage6 == 0 || win.farmingPatchStage6 == 4))
 		{
 			return -1;
@@ -7093,8 +7099,12 @@ var timer;
 		{
             if(win.donorFarmingPatch < win.currentTimeMillis && (i == 5 || i == 6)){
                 i = 7;
-            }
-		
+            }		
+			
+			
+			
+			
+			
 			var remainingTimer = getGameValue('farmingPatchGrowTime' + i) - getGameValue('farmingPatchTimer' + i);
 			minTimer = minTimer === null ? remainingTimer : Math.min(minTimer, remainingTimer);
 		}
@@ -7362,7 +7372,6 @@ var timer;
 		notifBox.style.display = 'none';
 		notifBox.innerHTML = "<img src=\"images/rocket.png\" class=\"image-icon-50\" id=\"notif-rocket-img\" style=\"margin-right: 10px;\"><span class=\"timer\" data-item-display=\"rocketTimer\"></span><span class=\"" + PERCENT_CLASS + "\" data-item-display=\"rocketPercent\"></span>";
 		notifBox.title = 'This value is only an estimation based on an average speed of '+AVG_KM_PER_SEC+'km per second.';
-
 		notifArea.appendChild(notifBox);
 		var img = notifBox.getElementsByTagName('img').item(0);
 		var timerEl = notifBox.getElementsByClassName(TIMER_CLASS).item(0);
@@ -7381,13 +7390,9 @@ var timer;
 			
 			
 			
-			
-			
-			
-			
-			
-			
 			var hideTimer = win.rocketKm <= 0 || !hideStatic;
+			
+			
 			notifBox.style.display = hideTimer ? 'none' : '';
 			
 			
@@ -7445,8 +7450,6 @@ var timer;
 		{
 			return updateRocketDirection();
 		});
-	}
-
 	}
 
 	function addVendorRefreshTimer()
@@ -8530,12 +8533,13 @@ var styleTweaks;
 				var progress = document.getElementById('skill-progress-' + skill);
 				if (progress)
 {
-					if (perc >= 100)
+					if (currentLevelXp >= 10000000)
 					{
 						perc = 100;
+						progress.style.backgroundColor = "yellow";
 					}
 					progress.style.width = perc + '%';
-}
+				}
 			}
 		};
 		// init additional skill bars
@@ -9973,34 +9977,26 @@ var general;
 			}
 		}
 		var sentBoat = getSentBoat();
-		
-		
-			baitBox.style.display = sentBoat !== null && !boundBoatingDock ? 'none' : '';
-     		runningBox.style.display = sentBoat !== null && !boundBoatingDock ? '' : 'none';
-     		// just in case Smitty changes this game mechanic somehow, don't disable the button:
-     		// sendBtn.disabled = sentBoat !== null;
-             if(!boundBoatingDock)
-     		sendBtn.style.color = sentBoat !== null ? 'gray' : '';
-     		win.$(boatDialog).on('dialogclose', function ()
-     		{
-     			if (sendBtn)
-     			{
-     				sendBtn.style.color = '';
-     			}
-     		});
-     		if (sentBoat === boat)
-     		{
-     			runningBox.innerHTML = "<b>Returning in:</b> <span data-item-display=\"" + boat + "Timer\">" + format.timer(getGameValue(boat + 'Timer')) + "</span>";
-     		}
-     		else if (sentBoat !== null && !boundBoatingDock)
-     		{
-     			runningBox.innerHTML = "Wait for the other boat to return.";
-     		}
-		
-		
-		
-		
-		
+		baitBox.style.display = sentBoat !== null ? 'none' : '';
+		runningBox.style.display = sentBoat !== null ? '' : 'none';
+		// just in case Smitty changes this game mechanic somehow, don't disable the button:
+		// sendBtn.disabled = sentBoat !== null;
+		sendBtn.style.color = sentBoat !== null ? 'gray' : '';
+		win.$(boatDialog).on('dialogclose', function ()
+		{
+			if (sendBtn)
+			{
+				sendBtn.style.color = '';
+			}
+		});
+		if (sentBoat === boat)
+		{
+			runningBox.innerHTML = "<b>Returning in:</b> <span data-item-display=\"" + boat + "Timer\">" + format.timer(getGameValue(boat + 'Timer')) + "</span>";
+		}
+		else if (sentBoat !== null)
+		{
+			runningBox.innerHTML = "Wait for the other boat to return.";
+		}
 		else
 		{
 			var enoughBaitAndCoal = win.fishingBait >= win.fishingBaitCost(boat)
