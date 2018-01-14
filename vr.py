@@ -338,9 +338,9 @@ def dlpics():
     small_landscape='small_landscape_image.jpg'
 
 def opics():
-    
+    #oculus_dir='C:\Program Files\Oculus\Software\Software\StoreAssets\C_Users_kevin_Downloads_RMVR_RickAndMortyVR_assets
     a=oculus_dir
-    b='Software\Software\StoreAssets/'
+    b='CoreData\Software\StoreAssets/'
     c= games_data[s][3]
     d='_assets'
     imdir= a+b+c+d
@@ -369,8 +369,9 @@ def opics():
 
         
 def findpics(game):
-  
-    'test'
+    #search_google -s cx="013228151091691353158:u9tmqgz3wy4"
+    #search_google -s build_developerKey="AIzaSyASXnwW10UZ8eTWknwtncug1x1bqaMd_OA"
+    'poop'
 
 
 
@@ -431,7 +432,7 @@ def main(redo):
     cwd=os.getcwd()
     print cwd
     files=[]
-    di='C:\Program Files\Oculus\Software\Manifests/'
+    di='C:\Program Files\Oculus\CoreData\Manifests/'
     os.chdir(di)
     for file in glob.glob("*.*"):
         files.append(file)
@@ -467,5 +468,4 @@ def main(redo):
     
                          
 main(True)
-
 
