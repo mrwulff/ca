@@ -338,7 +338,7 @@ def dlpics():
     small_landscape='small_landscape_image.jpg'
 
 def opics():
-    #oculus_dir='C:\Program Files\Oculus\Software\Software\StoreAssets\C_Users_kevin_Downloads_RMVR_RickAndMortyVR_assets
+    
     a=oculus_dir
     b='Software\Software\StoreAssets/'
     c= games_data[s][3]
@@ -369,9 +369,8 @@ def opics():
 
         
 def findpics(game):
-    #search_google -s cx="013228151091691353158:u9tmqgz3wy4"
-    #search_google -s build_developerKey="AIzaSyASXnwW10UZ8eTWknwtncug1x1bqaMd_OA"
-    'poop'
+  
+    'test'
 
 
 
@@ -469,16 +468,4 @@ def main(redo):
                          
 main(True)
 
-'''<script>
-  (function() {
-    var cx = '013228151091691353158:u9tmqgz3wy4';
-    var gcse = document.createElement('script');
-    gcse.type = 'text/javascript';
-    gcse.async = true;
-    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(gcse, s);
-  })();
-</script>
-<gcse:search></gcse:search>
-'''
+
